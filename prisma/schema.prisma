@@ -1,0 +1,96 @@
+// File: borealis-vpn/prisma/schema.prisma
+//
+// This is your database schema.
+// It defines your tables, columns, and relations.
+// Prisma uses this file to create your database tables and to
+// provide a type-safe way to access your data.
+
+generator client {
+  provider        = "prisma-client-js"
+  previewFeatures = ["driverAdapters"]
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("POSTGRES_URL") // Comes from Vercel
+}
+
+// Enum for User Roles (Admin vs. User)
+enum UserRole {
+  USER
+  ADMIN
+}
+
+// Enum for Account Types (Plans)
+enum UserPlan {
+  FREE
+  MONTHLY
+  YEARLY
+}
+
+// NEW: Enum for Plan Status (for Admin Approval)
+enum PlanStatus {
+  INACTIVE // Default for FREE users
+  PENDING  // User has requested an upgrade
+  ACTIVE   // Admin has approved the upgrade
+  EXPIRED  // Plan has expired
+}
+
+model User {
+  id            String    @id @default(cuid())
+  name          String?
+  email         String    @unique
+  emailVerified DateTime?
+  image         String?
+  password      String? // We will use this for Credentials (email/pass) auth
+  accounts      Account[]
+  sessions      Session[]
+
+  // -- YOUR CUSTOM FIELDS --
+  role          UserRole   @default(USER)
+  plan          UserPlan   @default(FREE)
+  planExpiresAt DateTime? // When the paid plan expires
+
+  // NEW: Field for admin approval status
+  planStatus    PlanStatus @default(INACTIVE)
+
+  // QOL Improvements
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+// --- STANDARD NEXTAUTH.JS MODELS ---
+// These are required for NextAuth.js to work.
+
+model Account {
+  userId            String
+  type              String
+  provider          String
+  providerAccountId String
+  refresh_token     String?
+  access_token      String?
+  expires_at        Int?
+  token_type        String?
+  scope             String?
+  id_token          String?
+  session_state     String?
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([provider, providerAccountId])
+}
+
+model Session {
+  sessionToken String   @unique
+  userId       String
+  expires      DateTime
+  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model VerificationToken {
+  identifier String
+  token      String
+  expires    DateTime
+
+  @@unique([identifier, token])
+}

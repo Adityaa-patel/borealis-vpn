@@ -1,0 +1,20 @@
+# See https://help.github.com/articles/ignoring-files/ for more about ignoring files.
+
+# Dependencies
+/node_modules
+/.pnp
+.pnp.js
+
+# Production
+/build
+/.next/
+/out/
+
+# Local Environment
+.env
+.env*.local
+*.log
+
+# Misc
+.DS_Store
+*.pem
