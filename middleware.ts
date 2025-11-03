@@ -37,7 +37,11 @@ export default auth((req) => {
   return;
 });
 
-// See "Matching Paths" below to learn more
+// FIX: Updated to use the recommended Vercel matcher to avoid 404s
+// It matches all paths except the ones that:
+// 1. Have a file extension (like .css, .js, .jpg)
+// 2. Start with _next (Next.js internals)
+// 3. Start with /api (Next.js API routes)
 export const config = {
-  matcher: ["/((?!.+\\.[\\w]+$|_next).*)", "/", "/(api|trpc)(.*)"],
+  matcher: ["/((?!api|_next/static|_next/image|favicon.ico).*)"],
 };
