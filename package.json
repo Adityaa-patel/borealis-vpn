@@ -9,7 +9,7 @@
     "lint": "next lint",
     "postinstall": "prisma generate"
   },
-  "dependencies": {
+"dependencies": {
     "@auth/prisma-adapter": "2.4.1",
     "@neondatabase/serverless": "^0.10.0",
     "@prisma/adapter-neon": "^5.16.1",
