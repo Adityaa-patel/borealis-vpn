@@ -1,10 +1,10 @@
 // File: borealis-vpn/app/account/page.tsx
 // UPDATED: Added "Cancel Subscription" button
-
 import { auth } from "@/auth";
 import { redirect } from "next/navigation";
-import { requestPlanUpgrade, cancelSubscription } from "./actions"; // Import new action
+import { requestPlanUpgrade, cancelSubscription } from "./actions";
 import { Button } from "@/components/ui/button";
+import Link from "next/link"; // <-- ADD THIS LINE
 
 export default async function AccountPage() {
   const session = await auth();
